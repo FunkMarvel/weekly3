@@ -37,10 +37,12 @@ int randNumb() {
 
 void gameplayLoop()
 {
+	//Function executing main gameplay loop.
 	char want_to_play{ 'y' };
 
-	while (want_to_play == 'y')
+	while (want_to_play == 'y')  // looping while player wants to play.
 	{
+		// game variables
 		int number{};
 		int guess{};
 		char randyn{};
@@ -92,6 +94,8 @@ void gameplayLoop()
 				std::cout << " " << guess << " is correct! You guessed " << numGuesses << " times." << std::endl;
 			}
 		}
+
+		// checks if player wants to play again:
 		std::cout << " Play again? y/n: ";
 		std::cin >> want_to_play;
 		want_to_play = tolower(want_to_play);
@@ -101,21 +105,29 @@ void gameplayLoop()
 
 void saveFile(std::string name, int score)
 {
+	// Function for saving name and score to file.
+	// Args:
+	//	name - string containing player name.
+	//	score - integer containing number of turns to guess.
+
+	//opens savefile:
 	std::ofstream ofile("\saves\scores.txt", std::ios::app);
 	if (ofile.is_open())
 	{
-		ofile << name << " " << score << std::endl;
+		ofile << name << " " << score << std::endl;  // saves data
 		ofile.close();
 	}
 	else
 	{
-		std::cout << "Save failed." << std::endl;
+		std::cout << "Save failed." << std::endl;  // exits on failure to open savefile
 		exit(1);
 	}
 }
 
 void menu()
 {
+	// Function for displaying menu and choosing options.
+
 	std::vector<std::string> menu_options = {
 	"~~ Main Menu ~~",
 	"Play game (p)",
@@ -124,7 +136,9 @@ void menu()
 	};
 	char choice{};
 
-	while (choice != 'n') {
+	while (true) { // menu persists until valid selection is made.
+
+		// prints menu options:
 		for (int i = 0; i < menu_options.size(); i++)
 		{
 			if (i != 0)
@@ -137,18 +151,19 @@ void menu()
 			}
 		}
 
+		// takes input:
 		std::cout << " Input menu number to select: ";
 		std::cin >> choice;
 		choice = tolower(choice);
 
-		switch (choice)
+		switch (choice)  // switches to menu option and executes selection.
 		{
-		case '1': case 'p':
+		case '1': case 'p':  // plays game
 			gameplayLoop();
 			break;
-		case '2': case 'l':
+		case '2': case 'l':  // displays leaderboard (not yet implemented)
 			break;
-		case '3': case 'q':
+		case '3': case 'q':  // quits game
 			return;
 		default:
 			break;
