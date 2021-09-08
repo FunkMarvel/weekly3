@@ -9,7 +9,9 @@
 int randNumb();
 void gameplayLoop();
 void saveFile(std::string, int);
+void loadFile(std::vector<std::string>&, std::vector<int>&);
 void menu();
+void leaderBoard();
 
 int main() {
 	// Program for playing guess a number.
@@ -22,6 +24,7 @@ int randNumb() {
 	// Function generating random integer from uniform distibutrion
 	// in given interval using 64bit Mersenne-Twister (the superior
 	// random number generator).
+	// Returns random number of type integer.
 
 	std::random_device rd;
 	std::mt19937_64 gen(rd());
@@ -29,7 +32,7 @@ int randNumb() {
 
 	// gives interval for random number to user:
 	std::cout << " Target number randomly chosen between 0 and 5." << std::endl;
-	Sleep(1500);
+	system("pause");
 	system("cls");
 
 	return RNG(gen);
@@ -39,6 +42,11 @@ void gameplayLoop()
 {
 	//Function executing main gameplay loop.
 	char want_to_play{ 'y' };
+	std::string name{};
+
+	std::cout << " Type your name: ";
+	std::cin >> name;
+	std::cout << std::endl;
 
 	while (want_to_play == 'y')  // looping while player wants to play.
 	{
@@ -95,6 +103,8 @@ void gameplayLoop()
 			}
 		}
 
+		saveFile(name, numGuesses);
+
 		// checks if player wants to play again:
 		std::cout << " Play again? y/n: ";
 		std::cin >> want_to_play;
@@ -105,7 +115,9 @@ void gameplayLoop()
 
 void saveFile(std::string name, int score)
 {
-	// Function for saving name and score to file.
+	// Function for saving name and score to file. Each line
+	// contains name of player and their score.
+	// 
 	// Args:
 	//	name - string containing player name.
 	//	score - integer containing number of turns to guess.
@@ -120,6 +132,36 @@ void saveFile(std::string name, int score)
 	else
 	{
 		std::cout << "Save failed." << std::endl;  // exits on failure to open savefile
+		exit(1);
+	}
+}
+
+void loadFile(std::vector<std::string> &names, std::vector<int> &scores)
+{
+	// Function for loading save data. Names is stored in names
+	// and scores are stored in scores at matching index.
+	// 
+	// Arg:
+	//	names - vector of strings passed by reference.
+	//	scores - vector of integers passed by reference.
+
+	std::ifstream ifile("\saves\scores.txt");
+	std::string line;
+
+	if (ifile.is_open())
+	{
+		while (std::getline(ifile, line))
+		{
+			if (line.size() > 0)
+			{
+				names.push_back(line.substr(0, line.find(' ')));
+				scores.push_back(stoi(line.substr(line.find(' '), -1)));
+			}
+		}
+	}
+	else
+	{
+		std::cout << "Load savefile failed." << std::endl;  // exits on failure to open savefile
 		exit(1);
 	}
 }
@@ -155,6 +197,7 @@ void menu()
 		std::cout << " Input menu number to select: ";
 		std::cin >> choice;
 		choice = tolower(choice);
+		system("cls");
 
 		switch (choice)  // switches to menu option and executes selection.
 		{
@@ -162,6 +205,7 @@ void menu()
 			gameplayLoop();
 			break;
 		case '2': case 'l':  // displays leaderboard (not yet implemented)
+			leaderBoard();
 			break;
 		case '3': case 'q':  // quits game
 			return;
@@ -170,4 +214,23 @@ void menu()
 		}
 		system("cls");
 	}
+}
+
+void leaderBoard()
+{
+	char key{};
+	// Function generating leaderboard.
+
+	// reading and storing save data:
+	std::vector<std::string> names{};
+	std::vector<int> scores{};
+	loadFile(names, scores);
+
+	std::cout << " Number of turns to solve (lower is better): " << std::endl;
+	for (int i = 0; i < scores.size(); i++)
+	{
+		std::cout << " " << i + 1 << ". " << names[i] << ": " << scores[i] << std::endl;
+	}
+	system("pause");
+	system("cls");
 }
