@@ -1,6 +1,7 @@
 // Weekly 3 Anders P. Åsbø.
 #include <iostream>
 #include <random>
+#include <Windows.h>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -259,6 +260,7 @@ void menu()
 
 void leaderBoard()
 {
+	char key{};
 	// Function generating leaderboard.
 
 	// reading and storing save data:
