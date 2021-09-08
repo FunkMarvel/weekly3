@@ -6,7 +6,7 @@
 
 int randNumb();
 void gameplayLoop();
-void saveScore();
+void saveFile(std::string, int);
 
 int main() {
 	// Program for playing guess a number.
