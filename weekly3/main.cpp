@@ -12,6 +12,8 @@ void saveFile(std::string, int);
 void loadFile(std::vector<std::string>&, std::vector<int>&);
 void menu();
 void leaderBoard();
+void delSave();
+void clearCin();
 
 int main() {
 	// Program for playing guess a number.
@@ -26,12 +28,47 @@ int randNumb() {
 	// random number generator).
 	// Returns random number of type integer.
 
+	int difficulty{};
+	int end{};
+	std::vector<std::string> difficulties = { "Easy (1-5)", "Medium (1-10)", "Hard (1-30)" };
+
+	// asking for difficulty to determine interval for distribution:
+	for (int i = 0; i < 3; i++)
+	{
+		std::cout << " " << i+1 << ". " << difficulties[i] << std::endl;
+	}
+
+	do
+	{ // loop persists until valid selection is made.
+		clearCin();
+		std::cout << "Select difficulty: ";
+		std::cin >> difficulty;
+		system("cls");
+
+		switch (difficulty)
+		{
+		case 1:
+			end = 5;
+			break;
+		case 2:
+			end = 10;
+			break;
+		case 3:
+			end = 30;
+			break;
+		default:
+			break;
+		}
+
+	} while (difficulty != 1 && difficulty != 2 && difficulty != 3);
+
+	// sets up random number generator:
 	std::random_device rd;
 	std::mt19937_64 gen(rd());
-	std::uniform_int_distribution<int> RNG(0, 5);
+	std::uniform_int_distribution<int> RNG(1, end);
 
 	// gives interval for random number to user:
-	std::cout << " Target number randomly chosen between 0 and 5." << std::endl;
+	std::cout << " Target number randomly chosen between 1 and " << end << "." << std::endl;
 	system("pause");
 	system("cls");
 
@@ -44,8 +81,9 @@ void gameplayLoop()
 	char want_to_play{ 'y' };
 	std::string name{};
 
+	clearCin();
 	std::cout << " Type your name: ";
-	std::cin >> name;
+	std::getline(std::cin, name);
 	std::cout << std::endl;
 
 	while (want_to_play == 'y')  // looping while player wants to play.
@@ -110,7 +148,7 @@ void gameplayLoop()
 		std::cin >> want_to_play;
 		want_to_play = tolower(want_to_play);
 	}
-
+	system("cls");
 }
 
 void saveFile(std::string name, int score)
@@ -123,10 +161,10 @@ void saveFile(std::string name, int score)
 	//	score - integer containing number of turns to guess.
 
 	//opens savefile:
-	std::ofstream ofile("\saves\scores.txt", std::ios::app);
+	std::ofstream ofile("scores.txt", std::ios::app);
 	if (ofile.is_open())
 	{
-		ofile << name << " " << score << std::endl;  // saves data
+		ofile << name << ':' << score << std::endl;  // saves data
 		ofile.close();
 	}
 	else
@@ -145,7 +183,7 @@ void loadFile(std::vector<std::string> &names, std::vector<int> &scores)
 	//	names - vector of strings passed by reference.
 	//	scores - vector of integers passed by reference.
 
-	std::ifstream ifile("\saves\scores.txt");
+	std::ifstream ifile("scores.txt");
 	std::string line;
 
 	if (ifile.is_open())
@@ -154,10 +192,11 @@ void loadFile(std::vector<std::string> &names, std::vector<int> &scores)
 		{
 			if (line.size() > 0)
 			{
-				names.push_back(line.substr(0, line.find(' ')));
-				scores.push_back(stoi(line.substr(line.find(' '), -1)));
+				names.push_back(line.substr(0, line.find(':')));
+				scores.push_back(stoi(line.substr(line.find(':')+1, -1)));
 			}
 		}
+		ifile.close();
 	}
 	else
 	{
@@ -174,6 +213,7 @@ void menu()
 	"~~ Main Menu ~~",
 	"Play game (p)",
 	"Leaderboard (l)",
+	"Delete save (d)",
 	"Quit (q)"
 	};
 	char choice{};
@@ -207,12 +247,14 @@ void menu()
 		case '2': case 'l':  // displays leaderboard (not yet implemented)
 			leaderBoard();
 			break;
-		case '3': case 'q':  // quits game
+		case '3': case 'd':
+			delSave();
+			break;
+		case '4': case 'q':  // quits game
 			return;
 		default:
 			break;
 		}
-		system("cls");
 	}
 }
 
@@ -226,6 +268,7 @@ void leaderBoard()
 	std::vector<int> scores{};
 	loadFile(names, scores);
 
+	// printing names and scores:
 	std::cout << " Number of turns to solve (lower is better): " << std::endl;
 	for (int i = 0; i < scores.size(); i++)
 	{
@@ -233,4 +276,33 @@ void leaderBoard()
 	}
 	system("pause");
 	system("cls");
+}
+
+void delSave() {
+	// function that empties save file.
+
+	std::string confirm{};
+	std::cout << " Type 'DELETE' to confirm: ";
+	std::cin >> confirm;
+	if (confirm == "DELETE")
+	{
+		std::ofstream ofile("scores.txt");  // overwrites savefile with empty file.
+		ofile.close();
+		std::cout << " Saves deleted." << std::endl;
+	}
+	else
+	{
+		std::cout << " Aborted deletion." << std::endl;
+	}
+	system("pause");
+	system("cls");
+}
+
+void clearCin()
+{
+	// Function that clears cin buffer.
+	// Courtesy of Johannes Skjeltorp-Borgaas.
+
+	std::cin.clear();
+	std::cin.ignore(32767, '\n');
 }
