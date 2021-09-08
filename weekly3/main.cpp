@@ -1,58 +1,69 @@
+// Weekly 3 Anders P. Åsbø.
 #include <iostream>
 #include <random>
 #include <Windows.h>
 
-using namespace std;
+int randNumb();
 
 int main() {
+	// Program for playing guess a number.
 	int number{};
 	int guess{};
 	char randyn{};
 	int numGuesses = 0;
+	
+	while (randyn != 'n' && randyn != 'y') {
+		std::cout << "Generate a random number? y/n: ";
+		std::cin >> randyn;
+		randyn = tolower(randyn);
 
-	cout << "Generate a random number? y/n: ";
-	cin >> randyn;
-
-	if (tolower(randyn) == 'n')
-	{
-		cout << "Enter a number to guess: ";
-		cin >> number;
-		cout << endl;
-	}
-	else
-	{
-		random_device rd;
-		mt19937_64 gen(rd());
-		uniform_int_distribution<int> RNG(0, 1000);
-
-		number = RNG(gen);
-
-		cout << "Target number randomly chosen between 0 and 1000." << endl;
-		Sleep(1500);
+		switch (randyn)
+		{
+			case 'n':
+				std::cout << "Enter a number to guess: ";
+				std::cin >> number;
+				std::cout << std::endl;
+				break;
+			case 'y':
+				number = randNumb();
+			default:
+				std::cout << "Please answer 'y' or 'n'." << std::endl;
+				break;
+		}
 	}
 
 
 	while (guess != number)
 	{
-		cout << "Guess a number: ";
-		cin >> guess;
-		cout << endl;
+		std::cout << "Guess a number: ";
+		std::cin >> guess;
+		std::cout << std::endl;
 		system("cls");
 		numGuesses++;
 
 		if (guess < number)
 		{
-			cout << "Too low! Guess again." << endl;
+			std::cout << guess << " is too low! Guess again." << std::endl;
 		}
 		else if (guess > number)
 		{
-			cout << "Too high! Guess again." << endl;
+			std::cout << guess << " is too high! Guess again." << std::endl;
 		}
 		else
 		{
-			cout << "Correct! You guessed " << numGuesses << " times." << endl;
+			std::cout << guess << " is correct! You guessed " << numGuesses << " times." << std::endl;
 		}
 	}
 
 
+}
+
+int randNumb() {
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<int> RNG(0, 5);
+	std::cout << "Target number randomly chosen between 0 and 5." << std::endl;
+	Sleep(1500);
+
+	return RNG(gen);
 }
