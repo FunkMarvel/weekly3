@@ -4,14 +4,57 @@
 #include <Windows.h>
 
 int randNumb();
+void gamePlayLoop();
 
 int main() {
 	// Program for playing guess a number.
+	char want_to_play{ 'y' };
+
+	while(want_to_play != 'n') {
+		switch (want_to_play)
+		{
+			case 'y':
+				gamePlayLoop();
+				break;
+			case 'n':
+				return 0;
+			default:
+				std::cout << "Please answer 'y' or 'n'." << std::endl;
+				break;
+		}
+		std::cout << "Do you want to play again? y/n: " << std::endl;
+		std::cin >> want_to_play;
+		want_to_play = tolower(want_to_play);
+		system("cls");
+	}
+
+	return 0;
+}
+
+int randNumb() {
+	// Function generating random integer from uniform distibutrion
+	// in given interval using 64bit Mersenne-Twister (the superior
+	// random number generator).
+
+	std::random_device rd;
+	std::mt19937_64 gen(rd());
+	std::uniform_int_distribution<int> RNG(0, 5);
+
+	// gives interval for random number to user:
+	std::cout << "Target number randomly chosen between 0 and 5." << std::endl;
+	Sleep(1500);
+	system("cls");
+
+	return RNG(gen);
+}
+
+void gamePlayLoop()
+{
 	int number{};
 	int guess{};
 	char randyn{};
 	int numGuesses = 0;
-	
+
 	while (randyn != 'n' && randyn != 'y') {
 		// asks whether to generate random number:
 		std::cout << "Generate a random number? y/n: ";
@@ -27,6 +70,7 @@ int main() {
 				break;
 			case 'y':  // generates random number:
 				number = randNumb();
+				break;
 			default:  // asks for correct input:
 				std::cout << "Please answer 'y' or 'n'." << std::endl;
 				break;
@@ -57,23 +101,4 @@ int main() {
 			std::cout << guess << " is correct! You guessed " << numGuesses << " times." << std::endl;
 		}
 	}
-
-
-}
-
-int randNumb() {
-	// Function generating random integer from uniform distibutrion
-	// in given interval using 64bit Mersenne-Twister (the superior
-	// random number generator).
-
-	std::random_device rd;
-	std::mt19937_64 gen(rd());
-	std::uniform_int_distribution<int> RNG(0, 5);
-
-	// gives interval for random number to user:
-	std::cout << "Target number randomly chosen between 0 and 5." << std::endl;
-	Sleep(1500);
-	system("cls");
-
-	return RNG(gen);
 }
