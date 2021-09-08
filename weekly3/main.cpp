@@ -2,9 +2,11 @@
 #include <iostream>
 #include <random>
 #include <Windows.h>
+#include <fstream>
 
 int randNumb();
-void gamePlayLoop();
+void gameplayLoop();
+void saveScore();
 
 int main() {
 	// Program for playing guess a number.
@@ -14,7 +16,7 @@ int main() {
 		switch (want_to_play)
 		{
 			case 'y':
-				gamePlayLoop();
+				gameplayLoop();
 				break;
 			case 'n':
 				return 0;
@@ -48,7 +50,7 @@ int randNumb() {
 	return RNG(gen);
 }
 
-void gamePlayLoop()
+void gameplayLoop()
 {
 	int number{};
 	int guess{};
@@ -100,5 +102,20 @@ void gamePlayLoop()
 		{
 			std::cout << guess << " is correct! You guessed " << numGuesses << " times." << std::endl;
 		}
+	}
+}
+
+void saveFile(std::string name, int score)
+{
+	std::ofstream ofile("\saves\scores.txt", std::ios::app);
+	if (ofile.is_open())
+	{
+		ofile << name << " " << score << std::endl;
+		ofile.close();
+	}
+	else
+	{
+		std::cout << "Save failed." << std::endl;
+		exit(1);
 	}
 }
